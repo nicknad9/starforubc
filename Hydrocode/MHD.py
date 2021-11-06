@@ -59,3 +59,5 @@ def Update(rho, vel, energy, pressure, grav, dt):
     rho = (rho + drho)[1:-1, 1:-1, 1:-1]
     internal = (1.0 / 2.0) * rho * np.sum(vel * vel) - energy
     pressure = (2.0 / 3.0) * (internal)
+
+    return rho, vel, energy, pressure
