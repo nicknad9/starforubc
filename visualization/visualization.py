@@ -3,8 +3,25 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.animation as anim
 
+# PLAN:
+# 1. implement multiprocessing with matplotlib (easy)
+# 2. reimplement to use vispy and opengl (really tough)
+
+# ~~~ VARIABLES ~~~
+
+# name of file that data will be stored in
+csv_to_visualize = "./dummy_data.csv"
+# the number of particles per step size
+number_particles = 2
+# range of x, y, and z axes
+xyz_range = 25
+# temperature thresholds
+cold_thresh = 0
+hot_thresh = 10000
+
 # ~~~ FUNCTIONS ~~~
 
+# divides csv file into a group for each step size
 def generate_groups(csv_file, num_particles):
     dataframe = pd.read_csv(csv_file)
     num_groups = int(dataframe.shape[0] / num_particles)
@@ -15,27 +32,25 @@ def generate_groups(csv_file, num_particles):
         groups.append(dataframe.iloc[start:end])
     return groups
 
+# choosed the color based on temperature
+def chooseColor(temperature):
+    return "red"
+
+# creates a new frame for the animation
 def update_animation(frame, *fargs):
     fig = fargs[0]
-    # specifies range of x, y and z values => WILL CHANGE
-    ax = fig.add_subplot(xlim=(0, 25), ylim=(0, 25), zlim=(0, 25), projection='3d')
+    a_range = fargs[1]
+    ax = fig.add_subplot(xlim=(0, a_range), ylim=(0, a_range), zlim=(0, a_range), projection='3d')
     ax.grid(False)
     ax.set_axis_off()
-    for index, row in fargs[1][frame].iterrows():
-        ax.scatter(row[0], row[1], row[2])
+    for index, row in fargs[2][frame].iterrows():
+        ax.scatter(row[0], row[1], row[2], c=chooseColor(row[4]))
     
-def visualize(csv_file, num_particles):
+# main abstraction for visualizing
+def visualize(csv_file, num_particles, axes_range):
     step_dataframes = generate_groups(csv_file, num_particles)
     fig = plt.figure()
-    ani = anim.FuncAnimation(fig, update_animation, interval=500, fargs=(fig, step_dataframes), frames=len(step_dataframes))
+    ani = anim.FuncAnimation(fig, update_animation, interval=500, fargs=(fig, axes_range, step_dataframes), frames=len(step_dataframes))
     ani.save('dummy_data.gif', writer='imagemagick')
 
-
-# ~~~ SPECIFICATION ~~~
-
-# name of file that data will be stored in
-csv_to_visualize = "./dummy_data.csv"
-# the number of particles per step size
-number_particles = 2
-
-visualize("./dummy_data.csv", number_particles)
+visualize("./dummy_data.csv", number_particles, xyz_range)
