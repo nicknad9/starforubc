@@ -17,16 +17,16 @@ L = np.arange(-15, 15, 1) + 0.5
 X, Y, Z = np.meshgrid(L, L, L)
 
 grav = 10 * [X, Y, Z] / np.power((X*X + Y*Y + Z*Z), 3)
-rho = np.random.random((31, 31, 31)) * 5
-vel = np.array([np.random.random((31, 31, 31)),
-                np.random.random((31, 31, 31)),
-                np.random.random((31, 31, 31))])
-internal = np.random.random((31, 31, 31)) * 10
+rho = np.random.random((30, 30, 30)) * 5
+vel = np.array([np.random.random((30, 30, 30)),
+                np.random.random((30, 30, 30)),
+                np.random.random((30, 30, 30))])
+internal = np.random.random((30, 30, 30)) * 10
 energy = internal + 0.5 * rho * np.sum(vel * vel)
 pressure = (2.0 / 3.0) * internal
 timestep = 1
 finaltime = 30
-SaveFile(rho, temperature, X, Y, Z)
+SaveFile(rho, pressure / rho, X, Y, Z)
 
 # Velocity: 3D Vector with [Vx (LxLxL), Vy(LxLxL), Vz (LxLxL)]
 # Rho: 3-dimensional Array of Scalars
@@ -39,4 +39,4 @@ for step in range(0, finaltime):
     temperature = pressure / rho
     SaveFile(rho, temperature, X, Y, Z)
 
-vs.visualize("data.csv", 29791, 31)
+vs.visualize("data.csv", 27000, 30)
