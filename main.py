@@ -12,17 +12,17 @@ def SaveFile(density, temperature, X, Y):
     df['temp'] = temperature.flatten()
     df.to_csv('data.csv', mode='a', index=False, header=False)
 
-L = np.arange(-15, 15, 1) + 0.5
+L = np.arange(-15, 15, 0.25) + 0.125
 X, Y = np.meshgrid(L, L)
 
-grav = 0.1 * np.array([X, Y]) / np.power((X*X + Y*Y), 3)
+grav = 100 * np.array([X, Y]) / np.power((X*X + Y*Y), 3.0 / 2.0)
 rho = np.exp(-1 * (X*X + Y*Y) / 200)
-vel = np.array([np.random.random((30, 30)),
-                np.random.random((30, 30))])
+vel = np.array([np.ones((120, 120)) * 0.1,
+                np.ones((120, 120)) * 0.1])
 internal = rho
 energy = internal + 0.5 * rho * np.sum(vel * vel)
 pressure = (2.0 / 3.0) * internal
-timestep = 0.00000001
+timestep = 0.0000001
 numsteps = 30
 
 df = pd.DataFrame(columns=[])
@@ -44,9 +44,10 @@ padded_grav_x = np.pad(grav_x, ((1,1), (1,1)), mode='constant')
 padded_grav_y = np.pad(grav_y, ((1,1), (1,1)), mode='constant')
 grav_pad = np.array([padded_grav_x, padded_grav_y])
 
-for step in range(0, numsteps):
-    rho, vel, energy, pressure = MHD.Update(rho, vel, energy, pressure, grav_pad, timestep)
+for step in range(1, numsteps+1):
+    rho, vel, energy, pressure = MHD.Update(rho, vel, energy, pressure, grav_pad, timestep, 0.25)
     temperature = pressure / rho
-    SaveFile(rho, temperature, X, Y)
+    if (step%5 == 0):
+        SaveFile(rho, temperature, X, Y)
 
 vs.visualize("data.csv", 13500, 30)

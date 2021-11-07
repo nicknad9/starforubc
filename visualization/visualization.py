@@ -63,5 +63,5 @@ def visualize(csv_file, num_particles, axes_range):
     ani.save('simulation.gif', writer='imagemagick')
 
 
-visualize("./dummy_data.csv", 2, 30)
+#visualize("./dummy_data.csv", 2, 30)
 
