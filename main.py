@@ -49,4 +49,4 @@ for step in range(0, numsteps):
     temperature = pressure / rho
     SaveFile(rho, temperature, X, Y)
 
-#vs.visualize("data.csv", 900, 30)
+vs.visualize("data.csv", 13500, 30)

@@ -34,17 +34,26 @@ def generate_groups(csv_file, num_particles):
 
 # choosed the color based on temperature
 def chooseColor(temperature):
+
     return "red"
+
+def chooseAlpha(density):
+    if density >= 4:
+        return 1
+    elif density <= 1:
+        return 0
+    else:
+        return density / 5
 
 # creates a new frame for the animation
 def update_animation(frame, *fargs):
     fig = fargs[0]
     a_range = fargs[1]
-    ax = fig.add_subplot(xlim=(0, a_range), ylim=(0, a_range), zlim=(0, a_range), projection='3d')
-    ax.grid(False)
-    ax.set_axis_off()
+    ax = fig.add_subplot(xlim=(-a_range, a_range), ylim=(-a_range, a_range))
+    # ax.grid(False)
+    # ax.set_axis_off()
     for index, row in fargs[2][frame].iterrows():
-        ax.scatter(row[0], row[1], row[2], c=chooseColor(row[4]))
+        ax.scatter(row[0], row[1], c=row[3], cmap="magma" ,alpha=chooseAlpha(row[2]))
 
 # main abstraction for visualizing
 def visualize(csv_file, num_particles, axes_range):
@@ -52,3 +61,7 @@ def visualize(csv_file, num_particles, axes_range):
     fig = plt.figure()
     ani = anim.FuncAnimation(fig, update_animation, interval=500, fargs=(fig, axes_range, step_dataframes), frames=len(step_dataframes))
     ani.save('simulation.gif', writer='imagemagick')
+
+
+visualize("./dummy_data.csv", 2, 30)
+
