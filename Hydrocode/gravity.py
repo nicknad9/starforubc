@@ -5,7 +5,6 @@ import scipy.sparse as sp                 # import sparse matrix library
 from scipy.sparse.linalg import spsolve
 
 def Diff_mat_1D(Nx):
-
     # First derivative
     D_1d = sp.diags([-1, 1], [-1, 1], shape = (Nx,Nx)) # A division by (2*dx) is required later.
     D_1d = sp.lil_matrix(D_1d)
@@ -20,20 +19,14 @@ def Diff_mat_1D(Nx):
 
     return D_1d, D2_1d
 
-
-
-
 def Diff_mat_2D(Nx,Ny):
     # 1D differentiation matrices
     Dx_1d, D2x_1d = Diff_mat_1D(Nx)
     Dy_1d, D2y_1d = Diff_mat_1D(Ny)
 
-
     # Sparse identity matrices
     Ix = sp.eye(Nx)
     Iy = sp.eye(Ny)
-
-
 
     # 2D matrix operators from 1D operators using kronecker product
     # First partial derivatives
@@ -43,8 +36,6 @@ def Diff_mat_2D(Nx,Ny):
     # Second partial derivatives
     D2x_2d = sp.kron(Iy,D2x_1d)
     D2y_2d = sp.kron(D2y_1d,Ix)
-
-
 
     # Return compressed Sparse Row format of the sparse matrices
     return Dx_2d.tocsr(), Dy_2d.tocsr(), D2x_2d.tocsr(), D2y_2d.tocsr()

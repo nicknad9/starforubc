@@ -38,13 +38,18 @@ def Update(rho, vel, energy, pressure, grav, dt, spacing):
     padded_vel_y = np.pad(vel_y, ((1,1), (1,1)), mode='constant')
     vel_pad = np.array([padded_vel_x, padded_vel_y])
 
+    grav_x, grav_y = grav[0], grav[1]
+    padded_grav_x = np.pad(grav_x, ((1,1), (1,1)), mode='constant')
+    padded_grav_y = np.pad(grav_y, ((1,1), (1,1)), mode='constant')
+    grav_pad = np.array([padded_grav_x, padded_grav_y])
+
     rho_pad = np.pad(rho, ((1,1), (1,1)), mode='constant')
     energy_pad = np.pad(energy, ((1,1), (1,1)), mode='constant')
     pressure_pad = np.pad(pressure, ((1,1), (1,1)), mode='constant')
 
     #Calculating
-    dE = StepEnergy(rho_pad, vel_pad, grav, pressure_pad, energy_pad, spacing)
-    dvel = StepVelocity(rho_pad, vel_pad, pressure_pad, grav, spacing)
+    dE = StepEnergy(rho_pad, vel_pad, grav_pad, pressure_pad, energy_pad, spacing)
+    dvel = StepVelocity(rho_pad, vel_pad, pressure_pad, grav_pad, spacing)
     drho = StepDensity(rho_pad, vel_pad, spacing)
 
     #Updating and Splicing

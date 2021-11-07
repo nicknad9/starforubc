@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from Hydrocode import MHD
 from visualization import visualization as vs
+from Hydrocode import gravity
 
 def SaveFile(density, temperature, X, Y):
     df = pd.DataFrame(columns=[])
@@ -15,14 +16,14 @@ def SaveFile(density, temperature, X, Y):
 L = np.arange(-15, 15, 0.25) + 0.125
 X, Y = np.meshgrid(L, L)
 
-grav = 100 * np.array([X, Y]) / np.power((X*X + Y*Y), 3.0 / 2.0)
 rho = np.exp(-1 * (X*X + Y*Y) / 200)
+grav = np.gradient(gravity.get_gravitational_potential(rho))
 vel = np.array([np.ones((120, 120)) * 0.1,
                 np.ones((120, 120)) * 0.1])
 internal = rho
 energy = internal + 0.5 * rho * np.sum(vel * vel)
 pressure = (2.0 / 3.0) * internal
-timestep = 0.0000001
+timestep = 0.00001
 numsteps = 30
 
 df = pd.DataFrame(columns=[])
@@ -45,8 +46,9 @@ padded_grav_y = np.pad(grav_y, ((1,1), (1,1)), mode='constant')
 grav_pad = np.array([padded_grav_x, padded_grav_y])
 
 for step in range(1, numsteps+1):
-    rho, vel, energy, pressure = MHD.Update(rho, vel, energy, pressure, grav_pad, timestep, 0.25)
+    rho, vel, energy, pressure = MHD.Update(rho, vel, energy, pressure, grav, timestep, 0.25)
     temperature = pressure / rho
+    grav = np.gradient(gravity.get_gravitational_potential(rho))
     if (step%5 == 0):
         SaveFile(rho, temperature, X, Y)
 
