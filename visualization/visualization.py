@@ -60,4 +60,3 @@ def visualize(csv_file, num_particles, axes_range):
 
 
 visualize("./data.csv", 14400, 15)
-
