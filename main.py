@@ -19,10 +19,10 @@ grav = 0.1 * np.array([X, Y]) / np.power((X*X + Y*Y), 3)
 rho = np.exp(-1 * (X*X + Y*Y) / 200)
 vel = np.array([np.random.random((30, 30)),
                 np.random.random((30, 30))])
-internal = rho * 0.01
+internal = rho
 energy = internal + 0.5 * rho * np.sum(vel * vel)
 pressure = (2.0 / 3.0) * internal
-timestep = 0.000000000001
+timestep = 0.00000001
 numsteps = 30
 
 df = pd.DataFrame(columns=[])
@@ -31,7 +31,7 @@ df['X'] = X.flatten()
 df['Y'] = Y.flatten()
 df['rho'] = rho.flatten()
 df['temp'] = (pressure / rho).flatten()
-df.to_csv('data.csv', mode='a', index=False, header=False)
+df.to_csv('data.csv', index=False, header=False)
 
 # Velocity: 2D Vector with [Vx (LxLxL), Vy(LxLxL), Vz (LxLxL)]
 # Rho: 2-dimensional Array of Scalars
@@ -49,4 +49,4 @@ for step in range(0, numsteps):
     temperature = pressure / rho
     SaveFile(rho, temperature, X, Y)
 
-vs.visualize("data.csv", 27000, 30)
+#vs.visualize("data.csv", 900, 30)
