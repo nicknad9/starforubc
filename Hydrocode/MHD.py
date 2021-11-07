@@ -33,15 +33,14 @@ def StepEnergy(rho, vel, grav, pressure, energy):
 
 def Update(rho, vel, energy, pressure, grav, dt):
     #Padding
-    vel_x, vel_y, vel_z = vel[0],vel[1],vel[2]
-    padded_vel_x = np.pad(vel_x, ((1,1), (1,1), (1, 1)), mode='constant')
-    padded_vel_y = np.pad(vel_y, ((1,1), (1,1), (1, 1)), mode='constant')
-    padded_vel_z = np.pad(vel_z, ((1,1), (1,1), (1, 1)), mode='constant')
-    vel_pad = np.array([padded_vel_x,padded_vel_y,padded_vel_z])
+    vel_x, vel_y = vel[0], vel[1]
+    padded_vel_x = np.pad(vel_x, ((1,1), (1,1)), mode='constant')
+    padded_vel_y = np.pad(vel_y, ((1,1), (1,1)), mode='constant')
+    vel_pad = np.array([padded_vel_x, padded_vel_y])
 
-    rho_pad = np.pad(rho, ((1,1), (1,1), (1, 1)), mode='constant')
-    energy_pad = np.pad(energy, ((1,1), (1,1), (1, 1)), mode='constant')
-    pressure_pad = np.pad(pressure, ((1,1), (1,1), (1, 1)), mode='constant')
+    rho_pad = np.pad(rho, ((1,1), (1,1)), mode='constant')
+    energy_pad = np.pad(energy, ((1,1), (1,1)), mode='constant')
+    pressure_pad = np.pad(pressure, ((1,1), (1,1)), mode='constant')
 
     #Calculating
     dE = StepEnergy(rho_pad, vel_pad, grav, pressure_pad, energy_pad)
@@ -50,12 +49,11 @@ def Update(rho, vel, energy, pressure, grav, dt):
 
     #Updating and Splicing
     vel_pad_updated = (vel_pad + dvel * dt)
-    vel_pad_updated_x, vel_pad_updated_y, vel_pad_updated_z = vel_pad_updated[0], vel_pad_updated[1], vel_pad_updated[2]
-    vel = np.array([vel_pad_updated_x[1:-1, 1:-1, 1:-1],
-                    vel_pad_updated_y[1:-1, 1:-1, 1:-1],
-                    vel_pad_updated_z[1:-1, 1:-1, 1:-1]])
-    energy = (energy_pad + dE * dt)[1:-1, 1:-1, 1:-1]
-    rho = (rho_pad + drho)[1:-1, 1:-1, 1:-1]
+    vel_pad_updated_x, vel_pad_updated_y = vel_pad_updated[0], vel_pad_updated[1]
+    vel = np.array([vel_pad_updated_x[1:-1, 1:-1],
+                    vel_pad_updated_y[1:-1, 1:-1]])
+    energy = (energy_pad + dE * dt)[1:-1, 1:-1]
+    rho = (rho_pad + drho)[1:-1, 1:-1]
     internal = (1.0 / 2.0) * rho * np.sum(vel * vel) - energy
     pressure = (2.0 / 3.0) * (internal)
 
