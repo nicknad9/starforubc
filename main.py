@@ -16,7 +16,7 @@ def SaveFile(density, temperature, X, Y, Z):
 L = np.arange(-15, 15, 1) + 0.5
 X, Y, Z = np.meshgrid(L, L, L)
 
-grav = 10 * [X, Y, Z] / np.power((X*X + Y*Y + Z*Z), 3)
+grav = [X, Y, Z] / np.power((X*X + Y*Y + Z*Z), 3)
 rho = np.random.random((30, 30, 30)) * 5
 vel = np.array([np.random.random((30, 30, 30)),
                 np.random.random((30, 30, 30)),

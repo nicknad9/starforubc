@@ -46,8 +46,8 @@ def Update(rho, vel, energy, pressure, grav, dt):
     pressure_pad = np.pad(pressure, ((1,1), (1,1), (1, 1)), mode='constant')
 
     #Calculating
-    dE = StepEnergy(rho_pad, vel_pad, grav_pad, pressure_pad, energy_pad)
-    dvel = StepVelocity(rho_pad, vel_pad, pressure_pad, grav_pad)
+    dE = StepEnergy(rho_pad, vel_pad, grav, pressure_pad, energy_pad)
+    dvel = StepVelocity(rho_pad, vel_pad, pressure_pad, grav)
     drho = StepDensity(rho_pad, vel_pad)
 
     #Updating and Splicing

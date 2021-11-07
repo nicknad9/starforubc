@@ -45,12 +45,12 @@ def update_animation(frame, *fargs):
     ax.set_axis_off()
     for index, row in fargs[2][frame].iterrows():
         ax.scatter(row[0], row[1], row[2], c=chooseColor(row[4]))
-    
+
 # main abstraction for visualizing
 def visualize(csv_file, num_particles, axes_range):
     step_dataframes = generate_groups(csv_file, num_particles)
     fig = plt.figure()
     ani = anim.FuncAnimation(fig, update_animation, interval=500, fargs=(fig, axes_range, step_dataframes), frames=len(step_dataframes))
-    ani.save('dummy_data.gif', writer='imagemagick')
+    ani.save('simulation.gif', writer='imagemagick')
 
-visualize("./dummy_data.csv", number_particles, xyz_range)
+#visualize("./dummy_data.csv", number_particles, xyz_range)
