@@ -7,7 +7,6 @@ dim = 3 #dimensionality of space
 vel = np.zeros(shape=(dim,L,L,L))
 
 def Divergence(vec, spacing=1):
-    print(vec.ndim)
     gradx = np.array(np.gradient(vec[0], spacing, edge_order=2, axis=0))
     grady = np.array(np.gradient(vec[1], spacing, edge_order=2, axis=1))
     gradz = np.array(np.gradient(vec[2], spacing, edge_order=2, axis=2))
@@ -26,8 +25,6 @@ def StepVelocity(rho, vel, pressure, grav):
     return (rho * grav - rho * np.sum(vel * VectorGradient(vel), axis=0) - np.gradient(pressure)) / rho
 
 def StepEnergy(rho, vel, grav, pressure, energy):
-    print(np.sum(grav * vel, axis=0).ndim)
-    input()
     return rho * np.sum(grav * vel, axis=0) - Divergence((energy + pressure) * vel)
 
 # Velocity: 3D Vector with [Vx (LxLxL), Vy(LxLxL), Vz (LxLxL)]
