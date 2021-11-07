@@ -62,4 +62,6 @@ def visualize(csv_file, num_particles, axes_range):
     ani = anim.FuncAnimation(fig, update_animation, interval=500, fargs=(fig, axes_range, step_dataframes), frames=len(step_dataframes))
     ani.save('simulation.gif', writer='imagemagick')
 
+
 visualize("./dummy_data.csv", 2, 30)
+
