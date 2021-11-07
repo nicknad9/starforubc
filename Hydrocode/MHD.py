@@ -9,14 +9,12 @@ vel = np.zeros(shape=(dim,L,L,L))
 def Divergence(vec, spacing=1):
     gradx = np.array(np.gradient(vec[0], spacing, edge_order=2, axis=0))
     grady = np.array(np.gradient(vec[1], spacing, edge_order=2, axis=1))
-    gradz = np.array(np.gradient(vec[2], spacing, edge_order=2, axis=2))
-    return gradx+grady+gradz
+    return gradx+grady
 
 def VectorGradient(vec, spacing=1):
     xdevs = np.array(np.gradient(vec, spacing, edge_order=2, axis=1))
     ydevs = np.array(np.gradient(vec, spacing, edge_order=2, axis=2))
-    zdevs = np.array(np.gradient(vec, spacing, edge_order=2, axis=3))
-    return np.array([xdevs, ydevs, zdevs])
+    return np.array([xdevs, ydevs])
 
 def StepDensity(rho, vel):
     return -1 * Divergence(rho * vel)
@@ -53,7 +51,9 @@ def Update(rho, vel, energy, pressure, grav, dt):
     #Updating and Splicing
     vel_pad_updated = (vel_pad + dvel * dt)
     vel_pad_updated_x, vel_pad_updated_y, vel_pad_updated_z = vel_pad_updated[0], vel_pad_updated[1], vel_pad_updated[2]
-    vel = np.array([padded_vel_x[1:-1, 1:-1, 1:-1], padded_vel_y[1:-1, 1:-1, 1:-1], padded_vel_z[1:-1, 1:-1, 1:-1]])
+    vel = np.array([vel_pad_updated_x[1:-1, 1:-1, 1:-1],
+                    vel_pad_updated_y[1:-1, 1:-1, 1:-1],
+                    vel_pad_updated_z[1:-1, 1:-1, 1:-1]])
     energy = (energy_pad + dE * dt)[1:-1, 1:-1, 1:-1]
     rho = (rho_pad + drho)[1:-1, 1:-1, 1:-1]
     internal = (1.0 / 2.0) * rho * np.sum(vel * vel) - energy

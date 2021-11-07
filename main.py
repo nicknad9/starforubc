@@ -3,7 +3,7 @@ import pandas as pd
 from Hydrocode import MHD
 from visualization import visualization as vs
 
-def SaveFile(density, temperature, X, Y, Z):
+def SaveFile(pressure, energy, density, temperature, X, Y, Z):
     df = pd.DataFrame(columns=[])
 
     df['X'] = X.flatten()
@@ -11,22 +11,34 @@ def SaveFile(density, temperature, X, Y, Z):
     df['Z'] = Z.flatten()
     df['rho'] = rho.flatten()
     df['temp'] = temperature.flatten()
+    df['pressure'] = pressure.flatten()
+    df['E'] = energy.flatten()
     df.to_csv('data.csv', mode='a', index=False, header=False)
 
 L = np.arange(-15, 15, 1) + 0.5
 X, Y, Z = np.meshgrid(L, L, L)
 
-grav = [X, Y, Z] / np.power((X*X + Y*Y + Z*Z), 3)
-rho = np.random.random((30, 30, 30)) * 5
+grav = 0.1 * np.array([X, Y, Z]) / np.power((X*X + Y*Y + Z*Z), 3)
+rho = np.exp(-(X*X + Y*Y + Z*Z) / 200)
 vel = np.array([np.random.random((30, 30, 30)),
                 np.random.random((30, 30, 30)),
                 np.random.random((30, 30, 30))])
-internal = np.random.random((30, 30, 30)) * 10
+internal = rho * 0.01
 energy = internal + 0.5 * rho * np.sum(vel * vel)
 pressure = (2.0 / 3.0) * internal
-timestep = 1
-finaltime = 30
-SaveFile(rho, pressure / rho, X, Y, Z)
+timestep = 0.000000000001
+numsteps = 30
+
+df = pd.DataFrame(columns=[])
+
+df['X'] = X.flatten()
+df['Y'] = Y.flatten()
+df['Z'] = Z.flatten()
+df['rho'] = rho.flatten()
+df['temp'] = (pressure / rho).flatten()
+df['pressure'] = pressure.flatten()
+df['E'] = energy.flatten()
+df.to_csv('data.csv', mode='a', index=False, header=False)
 
 # Velocity: 3D Vector with [Vx (LxLxL), Vy(LxLxL), Vz (LxLxL)]
 # Rho: 3-dimensional Array of Scalars
@@ -34,9 +46,15 @@ SaveFile(rho, pressure / rho, X, Y, Z)
 # Energy: 3-dimensional Array of Scalars
 # Pressure: 3-dimensional Array of Scalars
 
-for step in range(0, finaltime):
-    rho, vel, energy, pressure = MHD.Update(rho, vel, energy, pressure, grav, timestep)
+grav_x, grav_y, grav_z = grav[0], grav[1], grav[2]
+padded_grav_x = np.pad(grav_x, ((1,1), (1,1), (1,1)), mode='constant')
+padded_grav_y = np.pad(grav_y, ((1,1), (1,1), (1,1)), mode='constant')
+padded_grav_z = np.pad(grav_z, ((1,1), (1,1), (1,1)), mode='constant')
+grav_pad = np.array([padded_grav_x, padded_grav_y, padded_grav_z])
+
+for step in range(0, numsteps):
+    rho, vel, energy, pressure = MHD.Update(rho, vel, energy, pressure, grav_pad, timestep)
     temperature = pressure / rho
-    SaveFile(rho, temperature, X, Y, Z)
+    SaveFile(pressure, energy, rho, temperature, X, Y, Z)
 
 vs.visualize("data.csv", 27000, 30)
