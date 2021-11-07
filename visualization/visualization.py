@@ -32,15 +32,11 @@ def generate_groups(csv_file, num_particles):
         groups.append(dataframe.iloc[start:end])
     return groups
 
-# choosed the color based on temperature
-def chooseColor(temperature):
-
-    return "red"
-
+# choose the opacity based on density
 def chooseAlpha(density):
-    if density >= 4:
+    if density >= 0.8:
         return 1
-    elif density <= 1:
+    elif density <= 0.1:
         return 0
     else:
         return density / 5
@@ -63,5 +59,5 @@ def visualize(csv_file, num_particles, axes_range):
     ani.save('simulation.gif', writer='imagemagick')
 
 
-visualize("./dummy_data.csv", 2, 30)
+visualize("./data.csv", 14400, 15)
 
